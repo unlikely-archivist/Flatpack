@@ -1,51 +1,103 @@
 # Flatpack
-**An Obsidian Templater Template** that combines some of all of your notes into Master documents, including your embeds while restraining "embed echo" that comes from heavily cross embedded vaults and retaining your folder structure.
 
-(I got really sick of updating a master doc every time I added a file or folder, and even sicker of having the same embed removed from a .baked file 16 times. Flatpack will collect your files, retain your folder structure and only include an embed the firtst time it shows up)
+**An Obsidian Templater template** that combines some or all of your notes into one Master Document — pulling in your embeds while restraining the embed "echo" from heavily cross-embedded vaults, and keeping your folder structure intact.
 
+## The echo problem
 
-## The problem
+Embed the same note in ten places, then bake your vault, and that note's content gets copied ten times. Shared sections balloon. A clean vault turns into a bloated master document where the important stuff repeats over and over:
 
-When you embed the same note in multiple places across your vault, traditional baking tools duplicate that content — you end up with a bloated document where important sections repeat 6+ times.
+# Master
+## ALL GPT KNOWLEDGE
+[1,200 lines of content]
+...
+## ALL GPT KNOWLEDGE
+[the same 1,200 lines]
+...
+## ALL GPT KNOWLEDGE
+[again]
+```
 
-## The solution
+## What Flatpack does instead
 
-Flatpack combines your notes into one clean master document, embedding all content but eliminating duplicates. Repeated embeds become `> 🔁 See:` pointers instead. Your folder structure is preserved as heading levels (top folder = `##`, subfolder = `###`, files = `####`, etc.).
+It keeps the first copy and turns every repeat into a one-line pointer:
 
-**Example:** A typical heavily cross-embedded vault that bakes to 104k lines combines into 9.7k lines with Flatpack.
+```
+# Master
+## ALL GPT KNOWLEDGE
+[1,200 lines — once]
+...
+> 🔁 See: ALL GPT KNOWLEDGE
+...
+> 🔁 See: ALL GPT KNOWLEDGE
+```
+
+Same information, none of the bloat. In testing, a vault that baked to 104,000 lines came out as 9,700 with Flatpack.
+
+Your folder structure becomes the heading hierarchy automatically: a top-level folder = `##`, a subfolder = `###`, the files inside = `####`, and so on.
 
 ## Install
 
 1. Copy `Flatpack.md` into your Obsidian `templates` folder
 2. Open any note → Templater → Insert Template → Flatpack
-3. A combined master document appears
-
-## What you can combine
-
-- **Your whole vault:** `ROOTS = []`
-- **Specific folders only:** `ROOTS = ["01 Operations","03 GPTS"]`
-- **Everything except certain folders:** use `EXCLUDE_FOLDERS`
-- **Everything except certain notes:** use `EXCLUDE_FILES`
+3. Your Master Document appears
 
 ## Configure
 
-Edit the five settings at the top of the template:
+Five settings live at the top of the template — these are the only things you touch:
 
 | Setting | What it does |
 |---------|--------------|
-| `TITLE` | Output note name (e.g., `"Master"`) |
-| `ROOTS` | `[]` = whole vault; or `["01 Operations","03 GPTS"]` to combine only those |
-| `EXCLUDE_FOLDERS` | Folder names to skip (e.g., `["templates","archive"]`) |
-| `EXCLUDE_FILES` | Note names to skip (e.g., `["WIP","Untitled"]`) |
-| `OUT_FOLDER` | Where to save it (e.g., `"00 Master"` or `""` for vault root) |
+| `TITLE` | Name of the output note, and its top heading |
+| `ROOTS` | `[]` for your whole vault, or a list like `["Projects","Research"]` to combine only those folders |
+| `EXCLUDE_FOLDERS` | Folder names to skip (e.g. `["templates","Archive"]`) |
+| `EXCLUDE_FILES` | Note names to skip (e.g. `["Untitled"]`) |
+| `OUT_FOLDER` | Where to save the result (`""` = vault root) |
 
-## Example configs
+## Examples
 
-**Combine your whole vault:**
+**Your whole vault:**
 ```javascript
 const TITLE = "Master";
 const ROOTS = [];
 const EXCLUDE_FOLDERS = ["templates"];
 const EXCLUDE_FILES = [];
 const OUT_FOLDER = "";
+```
 
+**Just your Projects folder:**
+```javascript
+const TITLE = "All Projects";
+const ROOTS = ["Projects"];
+const EXCLUDE_FOLDERS = [];
+const EXCLUDE_FILES = [];
+const OUT_FOLDER = "";
+```
+
+**Projects + Research, skipping templates and drafts:**
+```javascript
+const TITLE = "Working Set";
+const ROOTS = ["Projects","Research"];
+const EXCLUDE_FOLDERS = ["templates"];
+const EXCLUDE_FILES = ["Untitled"];
+const OUT_FOLDER = "Master";
+```
+
+## How it works
+
+- Walks the folders you selected and combines every note into one document
+- Folder depth sets the heading level, so your structure stays readable
+- Keeps the first copy of any embedded note; later repeats become `> 🔁 See:` pointers
+- Notes are sorted alphabetically within each folder
+- File attachments (images, PDFs, spreadsheets) become `📎 [filename]` placeholders
+- Broken links are flagged with `> (unresolved: [link])`
+- Empty folders are skipped, and your source notes are never touched
+
+## Requirements
+
+- Obsidian with the Templater plugin installed
+
+## Tips
+
+- Run it from any note — it doesn't read the note you're in, it reads the vault
+- Re-run anytime to regenerate as your vault grows
+- Tweak `ROOTS` to make focused documents — one per project, one per area, whatever you need
