@@ -112,12 +112,20 @@ const OUT_FOLDER = "Master";
 
 ### v.1.1.0
 - Added `FINAL_DESTINATION` setting to move files after creation
+  
 - Added page breaks (`---`) between files for cleaner PDF exports
+  
 - Fixed file path tracking after move operation
+  
 - Improved notification message to show actual save location
+  
 - Fixed duplicate code line
+  
 - Better error handling for move failures
-- Auto-append date to filename (YYYY-MM-DD format) — customize `FILENAME` prefix only
+  
+- Auto-append date to filename (YYYY-MM-DD format)
+
+- customize `FILENAME` prefix only
 
 ### v.1.0.0
 - Initial release: vault scanning, deduplication, folder-depth heading levels
