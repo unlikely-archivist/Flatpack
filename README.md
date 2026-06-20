@@ -96,11 +96,6 @@ const OUT_FOLDER = "Master";
 
 - Obsidian with the Templater plugin installed
 
-## Tips
-
-- Run it from any note — it doesn't read the note you're in, it reads the vault
-- Re-run anytime to regenerate as your vault grows
-- Tweak `ROOTS` to make focused documents — one per project, one per area, whatever you need
 
 ## Tips
 
@@ -109,6 +104,9 @@ const OUT_FOLDER = "Master";
 - Tweak `ROOTS` to make focused documents — one per project, one per area, whatever you need
 
 ## Changelog
+
+### v.1.1.1
+- Fixed `FINAL_DESTINATION` move operation (use vault.rename instead of adapter.move)
 
 ### v.1.1.0
 - Added `FINAL_DESTINATION` setting to move files after creation
@@ -133,8 +131,5 @@ const OUT_FOLDER = "Master";
 ## Requirements
 
 - Obsidian with the Templater plugin installed
-
-### v.1.1.1
-- Fixed `FINAL_DESTINATION` move operation (use vault.rename instead of adapter.move)
 
   
