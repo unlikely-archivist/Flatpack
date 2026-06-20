@@ -133,3 +133,8 @@ const OUT_FOLDER = "Master";
 ## Requirements
 
 - Obsidian with the Templater plugin installed
+
+### v.1.1.1
+- Fixed `FINAL_DESTINATION` move operation (use vault.rename instead of adapter.move)
+
+  
