@@ -110,10 +110,9 @@ try{
   if(FINAL_DESTINATION){
     finalPath = FINAL_DESTINATION.replace(/\/$/,"") + "/" + TITLE + ".md";
     try {
-  const f = app.vault.getAbstractFileByPath(outPath);
-  if(f) await app.vault.rename(f, finalPath);
-} catch(e) { notify("Move failed: " + e.message); }
-
+      const f = app.vault.getAbstractFileByPath(outPath);
+      if(f) await app.vault.rename(f, finalPath);
+    } catch(e) { notify("Move failed: " + e.message); }
   }
 
   notify("Flatpack: " + files + " files, " + folders + " folders, " + pointers + " repeats packed away" + (missing? ", " + missing + " unresolved links flagged" : "") + ". Saved to " + (FINAL_DESTINATION || "vault root") + ".");
