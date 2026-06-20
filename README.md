@@ -101,3 +101,23 @@ const OUT_FOLDER = "Master";
 - Run it from any note — it doesn't read the note you're in, it reads the vault
 - Re-run anytime to regenerate as your vault grows
 - Tweak `ROOTS` to make focused documents — one per project, one per area, whatever you need
+
+ ##  Changelog
+
+ - v.1.1.0
+
+	•	Added FINAL_DESTINATION setting to move files after creation
+	•	Added page breaks (---) between files for cleaner PDF exports
+	•	Fixed file path tracking after move operation
+	•	Improved notification message to show actual save location
+	•	Fixed duplicate code line
+	•	Better error handling for move failures
+	•	Auto-append date to filename (YYYY-MM-DD format) — customize FILENAME prefix only
+
+ - v.1.0.0
+
+	•	Initial release: vault scanning, deduplication, folder-depth heading levels
+
+ - Requirements
+
+	•	Obsidian with the Templater plugin installed
