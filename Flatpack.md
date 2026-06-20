@@ -1,19 +1,22 @@
 <%*
-/* ======================== FLATPACK ==========================
+/* ===================== FLATPACK v.1.1.0 =======================
    Scans your vault's live folder tree and builds ONE clean master doc:
    folders -> headings (by real folder depth), each note's content baked in
    ONCE, repeated embeds turned into "> See:" pointers. No master list to keep.
-   Writes a NEW note named <TITLE> and never edits your source notes.
+   Creates a NEW note named <TITLE>, optionally moves it to <FINAL_DESTINATION>,
+   and never edits your source notes.
 
    ---- SETTINGS (edit these) ----------------------------------- */
-const TITLE = "Master";                    // the output note's name + H1
-const ROOTS = [];                          // [] = whole vault; or ["First Folder","Second Folder"]
-const EXCLUDE_FOLDERS = ["templates"];     // folder names to skip
-const EXCLUDE_FILES = [];                  // exact note names to skip
-const OUT_FOLDER = "";                     // "" = vault root; or "Output"
+const FILENAME = "Master";
+const TITLE = `${FILENAME}_${tp.date.now("YYYY-MM-DD")}`;
+const ROOTS = [];
+const EXCLUDE_FOLDERS = ["templates"];
+const EXCLUDE_FILES = ["Untitled"];
+const OUT_FOLDER = "";
+const FINAL_DESTINATION = "";
 /* ------------------------------------------------------------- */
 
-const SKIP_GENERATED = /\b(flatpack|baked|unbaked)\b/i;
+const SKIP_GENERATED = /\b(smart[- ]?baked|smart export|baked|unbaked|flatpack)\b/i;
 const known = new Set(app.vault.getMarkdownFiles().map(f => f.basename));
 const isFolder = c => Array.isArray(c.children);
 const levelOf = p => Math.min(6, p.split("/").length + 1);
@@ -34,6 +37,7 @@ const EMBED_ALL=/!\[\[([^\]]+)\]\]/g, EMBED_LINE=/^\s*!\[\[([^\]]+)\]\]\s*$/;
 
 async function emitFile(file, out){
   const fileLevel = levelOf(file.path); files++;
+  out.push("---"); out.push("");
   out.push("#".repeat(fileLevel)+" "+file.basename); out.push("");
   const L = (await app.vault.read(file)).replace(/\r\n?/g,"\n").split("\n");
   const inCode = fenceMap(L);
@@ -102,8 +106,14 @@ try{
   if(existing) await app.vault.modify(existing, baked);
   else await app.vault.create(outPath, baked);
 
-  notify("Flatpack: " + files + " files, " + folders + " folders, " + pointers + " repeats packed away" + (missing? ", " + missing + " unresolved links flagged" : "") + ". Saved as " + TITLE + ".");
-  try{ const f = app.vault.getAbstractFileByPath(outPath); if(f) await app.workspace.getLeaf(false).openFile(f); }catch(_){}
+  let finalPath = outPath;
+  if(FINAL_DESTINATION){
+    finalPath = FINAL_DESTINATION.replace(/\/$/,"") + "/" + TITLE + ".md";
+    try { await app.vault.adapter.move(outPath, finalPath); } catch(e) { notify("Move failed: " + e.message); }
+  }
+
+  notify("Flatpack: " + files + " files, " + folders + " folders, " + pointers + " repeats packed away" + (missing? ", " + missing + " unresolved links flagged" : "") + ". Saved to " + (FINAL_DESTINATION || "vault root") + ".");
+  try{ const f = app.vault.getAbstractFileByPath(finalPath); if(f) { await app.workspace.getLeaf(false).openFile(f); if(navigator.share) navigator.share({title: TITLE, text: TITLE + ".md"}); } }catch(_){}
 }catch(e){
   notify("Flatpack error: " + e.message);
 }
